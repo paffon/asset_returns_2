@@ -1,0 +1,31 @@
+{
+  "invest": {
+    "date_from": "2020-01-01",
+    "date_to": "now",
+    "initial_lump": 100,
+    "continuous_investment": 100,
+    "interval": "month"
+  },
+  "assets": {
+    "tickers": [
+      {
+        "display_name": "Nvidia",
+        "symbol": "NVDA"
+      },
+      {
+        "display_name": "STOXX Europe 600",
+        "symbol": "^STOXX"
+      }
+    ],
+    "cryptos": [
+      {
+        "display_name": "Bitcoin",
+        "symbol": "bitcoin"
+      },
+      {
+        "display_name": "ETH",
+        "symbol": "ethereum"
+      }
+    ]
+  }
+}
