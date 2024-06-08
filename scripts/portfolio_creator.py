@@ -8,19 +8,28 @@ from scripts.data_getter_crypto import get_cryptos_series
 
 
 def get_portfolio(ctx) -> pd.DataFrame:
-    ctx = update_dates(ctx)
-
+    # Get the raw data for tickers and cryptos
     df_0_raw: pd.DataFrame = get_raw_data(ctx['assets'])
 
+    # Fill the raw data with previous value in case of missing row
     df_1_daily = fill_raw_data(df_0_raw)
 
+    # Resample the data to the desired intervals
     df_2_periodic = periodic_resampling(df_1_daily, ctx['invest']['interval'])
 
-    df_3_changes = df_2_periodic.pct_change().fillna(0)
+    # Get data in range
+    date_from = ctx['invest']['date_from']
+    date_to = ctx['invest']['date_to']
+    df_3_in_range = df_2_periodic.loc[date_from:date_to]
 
-    df_4_portfolio_values = calculate_portfolio(df_3_changes, ctx['invest'])
+    # Fill with 0 if there's no data, implying no change
+    df_4_changes = df_3_in_range.pct_change(fill_method=None)
+    df_4_changes = df_4_changes.fillna(0)  # Fill missing values in the result with 0
 
-    return df_4_portfolio_values
+    # Calculate the portfolio
+    df_5_portfolio_values = calculate_portfolio(df_4_changes, ctx['invest'])
+
+    return df_5_portfolio_values
 
 
 def update_dates(ctx: dict) -> Dict[str, Any]:

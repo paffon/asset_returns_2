@@ -1,6 +1,6 @@
 {
   "invest": {
-    "date_from": "2020-01-01",
+    "date_from": "2010-01-01",
     "date_to": "now",
     "initial_lump": 100,
     "continuous_investment": 100,
@@ -9,22 +9,36 @@
   "assets": {
     "tickers": [
       {
-        "display_name": "Nvidia",
-        "symbol": "NVDA"
+        "display_name": "S&P 500",
+        "symbol": "^GSPC",
+        "include": true
       },
       {
-        "display_name": "STOXX Europe 600",
-        "symbol": "^STOXX"
+        "display_name": "S&P 500 x3",
+        "symbol": "SPXL",
+        "include": true
+      },
+      {
+        "display_name": "NASDAQ",
+        "symbol": "NDX",
+        "include": true
+      },
+      {
+        "display_name": "NASDAQ x3",
+        "symbol": "TQQQ",
+        "include": true
       }
     ],
     "cryptos": [
       {
         "display_name": "Bitcoin",
-        "symbol": "bitcoin"
+        "symbol": "bitcoin",
+        "include": false
       },
       {
         "display_name": "ETH",
-        "symbol": "ethereum"
+        "symbol": "ethereum",
+        "include": false
       }
     ]
   }

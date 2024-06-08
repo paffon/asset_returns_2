@@ -6,9 +6,11 @@ import yfinance as yf
 def get_tickers_series(ctx: List[dict]) -> Dict[str, pd.Series]:
     result = {}
 
-    for ticker_data_dict in ctx:
-        display_name = ticker_data_dict['display_name']
-        symbol = ticker_data_dict['symbol']
+    for data_fetch_parameters in ctx:
+        if not data_fetch_parameters.get('include'):
+            continue
+        display_name = data_fetch_parameters['display_name']
+        symbol = data_fetch_parameters['symbol']
         ticker_series = get_ticker_series(symbol)
         result[display_name] = ticker_series
 

@@ -6,9 +6,11 @@ import requests
 def get_cryptos_series(ctx: List[dict]) -> Dict[str, pd.Series]:
     result = {}
 
-    for ticker_data_dict in ctx:
-        display_name = ticker_data_dict['display_name']
-        symbol = ticker_data_dict['symbol']
+    for data_fetch_parameters in ctx:
+        if not data_fetch_parameters.get('include'):
+            continue
+        display_name = data_fetch_parameters['display_name']
+        symbol = data_fetch_parameters['symbol']
         crypto_series = get_crypto_series(symbol)
         result[display_name] = crypto_series
 
