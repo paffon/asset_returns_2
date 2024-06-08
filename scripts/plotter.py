@@ -3,8 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def get_title(df,initial, periodic_addition):
-    title = f'Portfolio- ' + ', '.join(df.columns) + f' - Initial: {initial}, Periodic: {periodic_addition}'
+def get_title(df,initial, periodic_addition, interval):
+    title = (f'Portfolio- ' + ', '.join(df.columns) +
+             f' - Initial: {initial}, Periodic: {periodic_addition}' +
+             f' Interval: {interval}')
     return title
 
 
@@ -24,14 +26,15 @@ def plot_portfolio(df: pd.DataFrame, ctx):
     """
     initial = ctx['invest']['initial_lump']
     periodic_addition = ctx['invest']['continuous_investment']
+    interval = ctx['invest']['interval']
 
-    title = get_title(df, initial, periodic_addition)
+    title = get_title(df, initial, periodic_addition, interval)
     outputs_dir = get_outputs_dir()
     if not os.path.exists(outputs_dir):
         os.makedirs(outputs_dir)
     img_path = os.path.join(outputs_dir, strip_forbidden_chars(title) + '.png')
 
-    chart_title = make_chart_title(df, initial, periodic_addition)
+    chart_title = make_chart_title(df, initial, periodic_addition, interval)
 
     plot_and_save(df, chart_title, img_path)
 
@@ -44,12 +47,12 @@ def strip_forbidden_chars(s: str):
     return s
 
 
-def make_chart_title(df: pd.DataFrame, initial, periodic_addition):
+def make_chart_title(df: pd.DataFrame, initial, periodic_addition, interval):
     min_date_Y_m_d = df.index.min().strftime('%Y-%m-%d')
     max_date_Y_m_d = df.index.max().strftime('%Y-%m-%d')
     title = f'Portfolio worth from {min_date_Y_m_d} to {max_date_Y_m_d}'
     title += '\n' + ', '.join(df.columns) + '\n'
-    title += f'Initial: {initial}, continuous investment: {periodic_addition}'
+    title += f'Initial: {initial}, added every {interval}: {periodic_addition}'
 
     return title
 

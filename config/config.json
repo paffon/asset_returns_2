@@ -2,9 +2,9 @@
   "invest": {
     "date_from": "2010-01-01",
     "date_to": "now",
-    "initial_lump": 100,
-    "continuous_investment": 100,
-    "interval": "month"
+    "initial_lump": 10000,
+    "continuous_investment": 10,
+    "interval": "day"
   },
   "assets": {
     "tickers": [
