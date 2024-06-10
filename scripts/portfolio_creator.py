@@ -26,10 +26,9 @@ def get_portfolio(ctx) -> pd.DataFrame:
     df_4_changes = df_3_in_range.pct_change(fill_method=None)
     df_4_changes = df_4_changes.fillna(0)  # Fill missing values in the result with 0
 
-    # Calculate the portfolio
-    df_5_portfolio_values = calculate_portfolio(df_4_changes, ctx['invest'])
+    df_5_result = invest_money(df_4_changes, ctx)
 
-    return df_5_portfolio_values
+    return df_5_result
 
 
 def update_dates(ctx: dict) -> Dict[str, Any]:
@@ -56,11 +55,13 @@ def get_raw_data(ctx: dict) -> pd.DataFrame:
 
     result = pd.DataFrame(raw_series_data)
 
-    # Create a series of ones with the same index as the result DataFrame
-    ones_series = pd.Series(1, index=result.index, name='Constant')
+    if ctx.get('constant', {}).get('include'):
+        # Create a series of ones with the same index as the result DataFrame
+        name = ctx['constant']['display_name']
+        ones_series = pd.Series(1, index=result.index, name=name)
 
-    # Concatenate the ones_series with the result DataFrame
-    result = pd.concat([ones_series, result], axis=1)
+        # Concatenate the ones_series with the result DataFrame
+        result = pd.concat([ones_series, result], axis=1)
 
     return result
 
@@ -114,18 +115,37 @@ def periodic_resampling(df: pd.DataFrame, interval: str) -> pd.DataFrame:
         return df.resample(resample_method).last()
 
 
-def calculate_portfolio(df: pd.DataFrame, ctx: dict) -> pd.DataFrame:
+def invest_money(df_original, ctx) -> pd.DataFrame:
+    df = df_original.copy()
+
+    # Calculate the portfolio
+    df_5_portfolio_continuous = calculate_continuous_investment(
+        df, ctx['invest'])
+    df_6_portfolio_lump = calculate_lump_investment(
+        df, ctx['invest'])
+
+    # Combine the two portfolios
+    df_7_result = pd.concat([df_5_portfolio_continuous, df_6_portfolio_lump], axis=1)
+
+    return df_7_result
+
+
+def calculate_continuous_investment(df_original: pd.DataFrame, ctx: dict
+                                    ) -> pd.DataFrame:
     """
     Calculates the portfolio value for each date in the DataFrame.
 
-    :param df: a pd.DataFrame of percentage changes, with index of dtype('<M8[ns]')
+    :param df_original: a pd.DataFrame of percentage changes, with index of dtype('<M8[ns]')
     :param ctx: a dict of investment parameters
     :return: a pd.DataFrame of portfolio values, with index of dtype('<M8[ns]')
     """
+    df = df_original.copy()
+
     initial_lump = ctx['initial_lump']
     continuous_investment = ctx['continuous_investment']
 
     # Initialize portfolio value with initial lump sum
+    df.columns = [f'{col}_DCA' for col in df.columns]
     portfolio_values = pd.DataFrame(index=df.index, columns=df.columns)
     portfolio_values.iloc[0] = initial_lump
 
@@ -134,5 +154,37 @@ def calculate_portfolio(df: pd.DataFrame, ctx: dict) -> pd.DataFrame:
         portfolio_values.iloc[i] = (
             portfolio_values.iloc[i - 1] * (1 + df.iloc[i])
         ) + continuous_investment
+
+    return portfolio_values
+
+
+def calculate_lump_investment(df_original: pd.DataFrame, ctx: dict
+                              ) -> pd.DataFrame:
+    """
+    Calculates the portfolio value for each date in the DataFrame as if the
+    initial investment included all subsequent periodic investments.
+
+    :param df_original: a pd.DataFrame of percentage changes, with index of dtype('<M8[ns]')
+    :param ctx: a dict of investment parameters
+    :return: a pd.DataFrame of portfolio values, with index of dtype('<M8[ns]')
+    """
+    df = df_original.copy()
+
+    # Initial lump sum investment
+    initial_lump = ctx['initial_lump']
+    # Continuous investment at each time step
+    continuous_investment = ctx['continuous_investment']
+
+    # Calculate the total initial lump sum including all future investments
+    total_initial_lump = initial_lump + continuous_investment * (len(df) - 1)
+
+    # Initialize portfolio value with total initial lump sum
+    df.columns = [f'{col}_lump_sum_investment' for col in df.columns]
+    portfolio_values = pd.DataFrame(index=df.index, columns=df.columns)
+    portfolio_values.iloc[0] = total_initial_lump
+
+    # Calculate cumulative portfolio value considering only percentage changes
+    for i in range(1, len(df)):
+        portfolio_values.iloc[i] = portfolio_values.iloc[i - 1] * (1 + df.iloc[i])
 
     return portfolio_values

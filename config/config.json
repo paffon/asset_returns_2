@@ -2,31 +2,43 @@
   "invest": {
     "date_from": "2010-01-01",
     "date_to": "now",
-    "initial_lump": 10000,
-    "continuous_investment": 10,
-    "interval": "day"
+    "initial_lump": 1,
+    "continuous_investment": 1,
+    "interval": "month"
   },
   "assets": {
+    "constant": {
+      "display_name": "0% change",
+      "include": false
+    },
     "tickers": [
       {
         "display_name": "S&P 500",
         "symbol": "^GSPC",
-        "include": true
+        "include": true,
+        "include_continuous": true,
+        "include_lump": true
       },
       {
         "display_name": "S&P 500 x3",
         "symbol": "SPXL",
-        "include": true
+        "include": true,
+        "include_continuous": true,
+        "include_lump": true
       },
       {
         "display_name": "NASDAQ",
         "symbol": "NDX",
-        "include": true
+        "include": true,
+        "include_continuous": true,
+        "include_lump": true
       },
       {
         "display_name": "NASDAQ x3",
         "symbol": "TQQQ",
-        "include": true
+        "include": true,
+        "include_continuous": true,
+        "include_lump": true
       }
     ],
     "cryptos": [
