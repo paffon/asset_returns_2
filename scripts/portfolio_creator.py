@@ -120,9 +120,9 @@ def invest_money(df_original, ctx) -> pd.DataFrame:
 
     # Calculate the portfolio
     df_5_portfolio_continuous = calculate_continuous_investment(
-        df, ctx['invest'])
+        df, ctx)
     df_6_portfolio_lump = calculate_lump_investment(
-        df, ctx['invest'])
+        df, ctx)
 
     # Combine the two portfolios
     df_7_result = pd.concat([df_5_portfolio_continuous, df_6_portfolio_lump], axis=1)
@@ -141,8 +141,14 @@ def calculate_continuous_investment(df_original: pd.DataFrame, ctx: dict
     """
     df = df_original.copy()
 
-    initial_lump = ctx['initial_lump']
-    continuous_investment = ctx['continuous_investment']
+    assets = [ctx['assets']['constant']] + ctx['assets']['tickers'] + ctx['assets']['cryptos']
+    for asset_dict in assets:
+        name = asset_dict['display_name']
+        if not asset_dict['include_continuous'] and name in df.columns:
+            df = df.drop(columns=asset_dict['display_name'])
+
+    initial_lump = ctx['invest']['initial_lump']
+    continuous_investment = ctx['invest']['continuous_investment']
 
     # Initialize portfolio value with initial lump sum
     df.columns = [f'{col}_DCA' for col in df.columns]
@@ -170,10 +176,16 @@ def calculate_lump_investment(df_original: pd.DataFrame, ctx: dict
     """
     df = df_original.copy()
 
+    assets = [ctx['assets']['constant']] + ctx['assets']['tickers'] + ctx['assets']['cryptos']
+    for asset_dict in assets:
+        name = asset_dict['display_name']
+        if not asset_dict['include_lump'] and name in df.columns:
+            df = df.drop(columns=asset_dict['display_name'])
+
     # Initial lump sum investment
-    initial_lump = ctx['initial_lump']
+    initial_lump = ctx['invest']['initial_lump']
     # Continuous investment at each time step
-    continuous_investment = ctx['continuous_investment']
+    continuous_investment = ctx['invest']['continuous_investment']
 
     # Calculate the total initial lump sum including all future investments
     total_initial_lump = initial_lump + continuous_investment * (len(df) - 1)

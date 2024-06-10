@@ -1,15 +1,17 @@
 {
   "invest": {
-    "date_from": "2022-01-01",
+    "date_from": "2020-03-01",
     "date_to": "now",
-    "initial_lump": 1,
-    "continuous_investment": 1,
+    "initial_lump": 10,
+    "continuous_investment": 10,
     "interval": "month"
   },
   "assets": {
     "constant": {
       "display_name": "0% change",
-      "include": false
+      "include": true,
+      "include_continuous": false,
+      "include_lump": true
     },
     "tickers": [
       {
@@ -17,26 +19,26 @@
         "symbol": "^GSPC",
         "include": true,
         "include_continuous": true,
-        "include_lump": true
+        "include_lump": false
       },
       {
         "display_name": "S&P 500 x3",
         "symbol": "SPXL",
-        "include": true,
-        "include_continuous": true,
-        "include_lump": true
+        "include": false,
+        "include_continuous": false,
+        "include_lump": false
       },
       {
         "display_name": "NASDAQ",
         "symbol": "NDX",
-        "include": true,
+        "include": false,
         "include_continuous": true,
         "include_lump": true
       },
       {
         "display_name": "NASDAQ x3",
         "symbol": "TQQQ",
-        "include": true,
+        "include": false,
         "include_continuous": true,
         "include_lump": true
       }
