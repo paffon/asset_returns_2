@@ -1,6 +1,6 @@
 {
   "invest": {
-    "date_from": "2010-01-01",
+    "date_from": "2022-01-01",
     "date_to": "now",
     "initial_lump": 1,
     "continuous_investment": 1,
@@ -45,12 +45,17 @@
       {
         "display_name": "Bitcoin",
         "symbol": "bitcoin",
-        "include": false
+        "include": false,
+        "include_continuous": true,
+        "include_lump": true
+
       },
       {
         "display_name": "ETH",
         "symbol": "ethereum",
-        "include": false
+        "include": false,
+        "include_continuous": true,
+        "include_lump": true
       }
     ]
   }
