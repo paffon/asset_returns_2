@@ -5,9 +5,8 @@ from matplotlib.lines import Line2D
 import seaborn as sns
 
 
-def get_title(df,initial, periodic_addition, interval):
+def get_title(df, interval):
     title = (f'Portfolio- ' + ', '.join(df.columns) +
-             f' - Initial: {initial}, Periodic: {periodic_addition}' +
              f' Interval: {interval}')
     return title
 
@@ -27,17 +26,15 @@ def plot_portfolio(df: pd.DataFrame, ctx):
     :param df: the portfolio df, with index of dtype('<M8[ns]')
     :param ctx: the context
     """
-    initial = ctx['invest']['initial_lump']
-    periodic_addition = ctx['invest']['continuous_investment']
     interval = ctx['invest']['interval']
 
-    title = get_title(df, initial, periodic_addition, interval)
+    title = get_title(df, interval)
     outputs_dir = get_outputs_dir()
     if not os.path.exists(outputs_dir):
         os.makedirs(outputs_dir)
     img_path = os.path.join(outputs_dir, make_file_name(title) + '.png')
 
-    chart_title = make_chart_title(df, initial, periodic_addition, interval, ctx)
+    chart_title = make_chart_title(df)
 
     plot_and_save(df, chart_title, img_path)
 
@@ -52,16 +49,11 @@ def make_file_name(s: str):
     return s
 
 
-def make_chart_title(df: pd.DataFrame, initial, periodic_addition, interval, ctx):
+def make_chart_title(df: pd.DataFrame):
     min_date_Y_m_d = df.index.min().strftime('%Y-%m-%d')
     max_date_Y_m_d = df.index.max().strftime('%Y-%m-%d')
-    title = f'Portfolio worth from {min_date_Y_m_d} to {max_date_Y_m_d}\n'
-    # title += '\n' + ', '.join(df.columns) + '\n'
-    initial = ctx['invest']['initial_lump']
-    periodic_addition = ctx['invest']['continuous_investment']
-    periods = len(df) - 1
-    total = initial + periodic_addition * periods
-    title += f'Amount: {initial:,} + {periodic_addition:,} * {periods:,} (total = {total:,})'
+    title = f'Portfolio: {min_date_Y_m_d} to {max_date_Y_m_d}\n'
+    title += f'Total invested amount: 100'
 
     return title
 

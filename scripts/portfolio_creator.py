@@ -147,19 +147,18 @@ def calculate_continuous_investment(df_original: pd.DataFrame, ctx: dict
         if not asset_dict['include_continuous'] and name in df.columns:
             df = df.drop(columns=asset_dict['display_name'])
 
-    initial_lump = ctx['invest']['initial_lump']
-    continuous_investment = ctx['invest']['continuous_investment']
+    # Set the unit amount such that the total is 100
+    investment_unit = 100 / len(df)
 
     # Initialize portfolio value with initial lump sum
     df.columns = [f'{col}_DCA' for col in df.columns]
     portfolio_values = pd.DataFrame(index=df.index, columns=df.columns)
-    portfolio_values.iloc[0] = initial_lump
+    portfolio_values.iloc[0] = investment_unit
 
     # Calculate cumulative portfolio value considering continuous investments and pct changes
     for i in range(1, len(df)):
-        portfolio_values.iloc[i] = (
-            portfolio_values.iloc[i - 1] * (1 + df.iloc[i])
-        ) + continuous_investment
+        change_since_last_period = portfolio_values.iloc[i - 1] * (1 + df.iloc[i])
+        portfolio_values.iloc[i] = change_since_last_period + investment_unit
 
     return portfolio_values
 
@@ -182,13 +181,8 @@ def calculate_lump_investment(df_original: pd.DataFrame, ctx: dict
         if not asset_dict['include_lump'] and name in df.columns:
             df = df.drop(columns=asset_dict['display_name'])
 
-    # Initial lump sum investment
-    initial_lump = ctx['invest']['initial_lump']
-    # Continuous investment at each time step
-    continuous_investment = ctx['invest']['continuous_investment']
-
-    # Calculate the total initial lump sum including all future investments
-    total_initial_lump = initial_lump + continuous_investment * (len(df) - 1)
+    # Set the lump sum to 100
+    total_initial_lump = 100
 
     # Initialize portfolio value with total initial lump sum
     df.columns = [f'{col}_lump_sum_investment' for col in df.columns]

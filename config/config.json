@@ -1,23 +1,35 @@
 {
   "invest": {
-    "date_from": "2020-03-01",
+    "date_from": "2014-06-11",
     "date_to": "now",
-    "initial_lump": 10,
-    "continuous_investment": 10,
     "interval": "month"
   },
   "assets": {
     "constant": {
       "display_name": "0% change",
       "include": true,
-      "include_continuous": false,
-      "include_lump": true
+      "include_continuous": true,
+      "include_lump": false
     },
     "tickers": [
       {
         "display_name": "S&P 500",
         "symbol": "^GSPC",
         "include": true,
+        "include_continuous": true,
+        "include_lump": true
+      },
+      {
+        "display_name": "Tel Aviv 125",
+        "symbol": "^TA125.TA",
+        "include": false,
+        "include_continuous": true,
+        "include_lump": false
+      },
+      {
+        "display_name": "MSCI World",
+        "symbol": "XWD.TO",
+        "include": false,
         "include_continuous": true,
         "include_lump": false
       },
