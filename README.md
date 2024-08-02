@@ -6,7 +6,7 @@ Add assets to the config files, run `main.py`
 
 
 ## Example
-Compare the performace of 4 assets:
+Compare the performance of 4 assets:
 1. S&P 500
 2. S&P 500 leveraged x3
 3. NASDAQ
